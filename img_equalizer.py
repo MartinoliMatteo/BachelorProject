@@ -7,7 +7,7 @@ import time
 
 def find_s_v_means(a):
     """
-    Takes an Image and converts it in HSV to find the saturation and brightness mean ignoring the zeros.
+    Takes an image and converts it in HSV to find the saturation and brightness mean ignoring the zeros.
 
     :param a: Image whose saturation and brightness mean need to be find.
     :return: The mean of s and v.
@@ -59,12 +59,12 @@ def decrease_brightness(img:np.array, ns:int, nv:int):
 
 def blend_images(background, overlay_img, overlay_mask):
     """
-    
+    Takes two images and a mask of the overlay and blend them in one image.
 
-    :param background:
-    :param overlay_img:
-    :param overlay_mask:
-    :return: 
+    :param background: Background image (normal areas);
+    :param overlay_img: Overlay image (burned areas);
+    :param overlay_mask: Overlay image mask;
+    :return: Combined image.
     """ 
     # The overlay mask is shrunk and blurred a little to make the transitions smoother
     overlay_mask = cv.erode(overlay_mask, cv.getStructuringElement(cv.MORPH_ELLIPSE, (3,3)))
@@ -86,25 +86,24 @@ def main(file_path, filename, parent):
     base = cv.imread(file_path)  
 
     with Image(filename=file_path) as img:  
+        # Hard threseholding - to identify the over-exposed areas
         img.format = 'png'  
         img.transform_colorspace('gray')
         white_point = 0.85
         black_point = 0.85
-        img.range_threshold(high_white = white_point, 
-                            high_black = black_point) 
-
+        img.range_threshold(high_white = white_point, high_black = black_point) 
         img_array = np.array(img) 
 
     overlay_mask = np.bitwise_not(img_array)  
-
     is_all_zero = np.all((overlay_mask == 0))
 
     if not is_all_zero: 
+        # Mask burned areas - to split the original image in two according to the mask found in the previous process.
         masked_overlay = np.bitwise_and(base, overlay_mask) 
         masked_background = np.bitwise_and(base, img_array)  
 
+        # Decrease brightness - to bring the brightness of the burned regions down to line with the average of the image.
         back_s, back_v = find_s_v_means(masked_background)
-
         light_s, light_v = find_s_v_means(masked_overlay)
 
         ns = abs(int(back_s-light_s))
@@ -112,13 +111,18 @@ def main(file_path, filename, parent):
         
         edited_overlay = decrease_brightness(masked_overlay, ns, nv)    
 
+        # Blend images - to recombine the two previously separated and altered images into one.
         combined_img = blend_images(base, edited_overlay, overlay_mask)     
     else:
         combined_img = base 
 
     cv.imwrite('{}eq_images/{}'.format(parent, filename), combined_img)  
+
+    # Normalize
     cmd = 'convert {}eq_images/{} -normalize {}eq_images/{}'.format(parent, filename, parent, filename) 
     os.system(cmd)
+
+    # Background equalization - adjustment to make the insects more recognizable.
     cmd = 'convert -brightness-contrast 10x10 {}eq_images/{} \( +clone -blur 100x100 \) -compose Divide_Src -composite -sharpen 0x1 {}eq_images/{}'.format(parent, filename, parent, filename)
     os.system(cmd) 
 

@@ -11,7 +11,7 @@ In order to reduce the differences between the images and make the insects more 
 ## How to run the algorithm
 python3 img_equalizer.py [IMAGES_PATH]
 
-IMAGES_PATH = Path for a folder containing the image set that needs to be equalized
+IMAGES_PATH = Path to a folder containing the image set that needs to be equalized
 
 ## Output
 It creates a new folder called eq_images where all the post-processed images are stored \

@@ -5,8 +5,8 @@ In order to reduce the differences between the images and make the insects more 
 - Over-exposed areas correction
 - Light equalization and shadow removal
 
-<img width="400" alt="a" src=https://user-images.githubusercontent.com/55786046/174867759-f7ef2cc5-bed1-41ce-8e66-074de66b1494.jpg)>
-<img width="400" alt="b" src=https://user-images.githubusercontent.com/55786046/174867871-6c4e98b2-9c51-4e63-8ccd-82de3f17990d.jpg)>
+![89882280666023306248_2108130703_0714](https://user-images.githubusercontent.com/55786046/175517424-4c5bdda9-a5a4-4e3d-a86f-4034d34caefc.jpg)
+![89882280666023306248_2108130703_0714](https://user-images.githubusercontent.com/55786046/175517487-1543cd64-5745-4f90-924d-13238fb22ed1.jpg)
 
 ## How to run the algorithm
 python3 img_equalizer.py [IMAGES_PATH]

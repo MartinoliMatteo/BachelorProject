@@ -141,7 +141,7 @@ if __name__ == '__main__':
     l = len([f for f in files if f.endswith('.jpg')])
 
     f = 1
-    for file in files: 
+    for file in sorted(files): 
         if file.endswith(".jpg"): 
             main(os.path.join(directory,file), file, parent) 
             print('{} EQUALIZATION COMPLETED ({}/{})'.format(file, f, l))
